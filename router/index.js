@@ -16,27 +16,29 @@ export default new Router({
     {
       path: '/Info',
       name: 'Info',
-      component: Info
-    },
-    {
-      path: '/Summary',
-      name: 'Summary',
-      component: Summary
-    },
-    {
-      path: '/Chart',
-      name: 'Chart',
-      component: Chart
+      component: Info,
+      children:[
+            {
+            	path: 'Summary',
+      			name: 'Summary',
+      			component: Summary
+      		},
+    		{
+      			path: 'Chart',
+      			name: 'Chart',
+      			component: Chart
+    		},
+		    {
+		      path: 'HistoricalData',
+		      name: 'HistoricalData',
+		      component: HistoricalData
+		    }	
+        ]
     },
     {
       path: '/MyPortfolio',
       name: 'MyPortfolio',
       component: MyPortfolio
-    },
-    {
-      path: '/HistoricalData',
-      name: 'HistoricalData',
-      component: HistoricalData
     },
     {
       path: '/ETFScreeners',

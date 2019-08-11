@@ -18,19 +18,61 @@
 		    </Poptip>
 		</div>
 	</div>
-	<div id="chart" class="chartdiv">
+	<div id="echartid" class="chartdiv">
 	</div>
   </div>
 </template>
+
 <script>
+import echarts from 'echarts'
 export default {
   name: 'Chart',
   data () {
-    return {
-
-    }
+  	return{
+  		responsedata: []
+  	}
   },
   components: {
+
+  }
+  ,
+  created: function() {
+	  	this.$nextTick(function(){
+	  		this.drawChart('echartid','#D9EFFC','test');
+	  	});
+	  	
+  	},
+  methods:{
+  	async drawChart(echartid,  colorvalue, titleval){
+      	const url = "./static/datatest.json";
+      	const res = await this.$http.get(url);
+      	var values = res.Astockdata;
+      	console.log(values);
+  		let dataShowChart = echarts.init(document.getElementById(echartid));
+  		let dates = new Array();
+        let closes = new Array();
+        for( var i = 0 ; i < values.length; i++){
+            dates.push(values[i].Date);
+            closes.push(values[i].Close);
+        }
+
+        var myChart = echarts.init(document.getElementById('echartid'));
+	            // s
+                    var option = {
+                        xAxis: {
+                        type: 'category',
+                        data: dates
+                    },
+                        yAxis: {
+                        type: 'value'
+                    },
+                    series: [{
+                        data: closes,
+                        type: 'line'
+                    }]
+                    }
+                    myChart.setOption(option);
+  		}
   }
 }
 </script>
@@ -62,8 +104,8 @@ export default {
 	width:300px;
 }
 .chartdiv{
-	height:800px;
-	width:600px;
+	height:600px;
+	width:1250px;
 	margin-left: 60px;
 }
 </style>

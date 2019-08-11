@@ -2,7 +2,7 @@
   <div id="app">
     <div class="div-title">
         <Input class="input-size" search enter-button placeholder="Enter Symbol..." />
-        <Button class="button-login" type="primary" :loading="loading" @click="toLoading">
+        <Button class="button-login" type="primary" >
           <span v-if="!loading">Log in!</span>
           <span v-else>Loading...</span>
         </Button>

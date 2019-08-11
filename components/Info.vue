@@ -7,7 +7,7 @@
 		</div>
 		<div class="button-isAddedtoWatch">
 		  	<Icon class="icon" type="md-heart-outline" size="24" />
-		  		Add to Portfolio
+		  		<p>Add to Portfolio</p>
 		</div>
 	</div>
 	<div class="price">
@@ -46,7 +46,7 @@ export default {
   },
   methods: {
   	selectpage: function(pageName){
-      this.$router.push('/'+pageName);
+      this.$router.push('/Info/'+pageName);
 	}
   },
   components: {
