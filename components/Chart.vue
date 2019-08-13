@@ -18,6 +18,7 @@
 		    </Poptip>
 		</div>
 	</div>
+
 	<div id="echartid" class="chartdiv">
 	</div>
   </div>
@@ -28,14 +29,13 @@ import echarts from 'echarts'
 export default {
   name: 'Chart',
   data () {
-  	return{
-  		responsedata: []
+  	return {
+  		searchSymbol: this.$route.params.searchSymbol
   	}
   },
   components: {
 
-  }
-  ,
+  },
   created: function() {
 	  	this.$nextTick(function(){
 	  		this.drawChart('echartid','#D9EFFC','test');
@@ -43,44 +43,70 @@ export default {
 	  	
   	},
   methods:{
+  	timetrans(date) {// 格式化日期
+            {
+                return new Date(parseInt(date) * 1000).toLocaleString().replace(/:\d{1,2}$/,' ');   
+            }
+    },
   	async drawChart(echartid,  colorvalue, titleval){
-      	const url = "./static/datatest.json";
-      	const res = await this.$http.get(url);
-      	var values = res.Astockdata;
-      	console.log(values);
+  		const url = "/GetStockHistory";
+      	const res = await this.$http.get(url,{stock_symbol:this.searchSymbol});
+      	// const url = "./static/test.json";
+      	// const res = await this.$http.get(url);
+      	console.log(res);
+      	//var values = res.Astockdata;
   		let dataShowChart = echarts.init(document.getElementById(echartid));
-  		let dates = new Array();
-        let closes = new Array();
-        for( var i = 0 ; i < values.length; i++){
-            dates.push(values[i].Date);
-            closes.push(values[i].Close);
-        }
-
+  		// let dates = new Array();
+    //     let closes = new Array();
+    //     let open = new Array();
+    //     let high = new Array();
+    //     let low = new Array();
+    //     for( var i = 0 ; i < values.length; i++){
+    //         dates.push(values[i].Date);
+    //         closes.push(values[i].Close);
+    //         open.push(values[i].Open);
+    //         high.push(values[i].High);
+    //         low.push(values[i].Low);
+    //     }
+			let dates = new Array();
+            let closes = new Array();
+            for(let ts in res["Close"]){
+                dates.push(this.timetrans(ts));
+                closes.push(res.Close[ts]);
+            }
         var myChart = echarts.init(document.getElementById('echartid'));
-	            // s
                     var option = {
+       //                  tooltip:{
+							// trigger: 'axis',
+							// show: true,
+							// formatter: function (val) { 
+							// 	return 'open:'+ open[val[0].value] + '</br>'+ 'close:'+ closes[val[0].value] + '</br>' + 'low:' + low[val[0].value] + '</br>' + 'high:' + high[val[0].value];
+							// }
+       //                  },
                         xAxis: {
-                        type: 'category',
-                        data: dates
-                    },
-                        yAxis: {
-                        type: 'value'
-                    },
-                    series: [{
-                        data: closes,
-                        type: 'line'
-                    }]
+	                        type: 'category',
+	                        data: dates
+	                    },
+	                        yAxis: {
+	                        type: 'value'
+	                    },
+	                    series: [{
+	                        data: closes,
+	                        type: 'line'
+	                    }]
                     }
                     myChart.setOption(option);
-  		}
+  		 }
   }
 }
 </script>
 
 
 <style>
+
 .head-choice{
 	margin-left: 60px;
+	height:32px;
 }
 .ComparisonDiv{
 	height:80px;
@@ -89,7 +115,7 @@ export default {
 	height:80px;
 }
 .ComparisonPop{
-	placement: right;
+	placement: left;
 	width: 117px;
 	float:left;
 }
@@ -108,4 +134,5 @@ export default {
 	width:1250px;
 	margin-left: 60px;
 }
+
 </style>

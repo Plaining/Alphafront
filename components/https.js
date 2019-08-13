@@ -1,12 +1,13 @@
 import axios from 'axios';
 
 let baseURL = '/';
+baseURL = 'http://192.168.43.79:8000/stock'
 // if(process.env.NODE_ENV=='development'){
-//     baseURL = 'http://132.232.94.151:3000/api'
+//     baseURL = 'http://223.104.212.22:8000/api'
 // }else{
 //     baseURL = '/'
 // }
-// baseURL es6 方法
+//baseURL es6 方法
 
 const $http = axios.create({
     baseURL,
@@ -17,11 +18,11 @@ export const get = (url,params)=>{
     return new Promise((resolve,reject)=>{
         $http.get(url,{
             params,
-        },{timeout: 10000000 * 60 * 2}).then(res=>{
-            resolve(res.data);
-            resolve(res.data.Astockdata.Close)
+        },{timeout: 10000000000 * 60 * 2}).then(res=>{
+             resolve(res.data);
         }).catch(error=>{
-            alert('internet error');
+            handleError(error);
+            alert(error.response);
         })
     })
 }
@@ -29,7 +30,7 @@ export const get = (url,params)=>{
 export const post = (url,params)=>{
     params = params || {};
     return new Promise((resolve,reject)=>{
-        $http.post(url,params).then(res=>{
+        $http.post(url,params,{timeout: 10000000 * 60 * 2}).then(res=>{
             resolve(res.data);
         }).catch(error=>{
             alert('internet error');

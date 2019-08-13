@@ -42,11 +42,27 @@ export default {
   data () {
     return {
       theme1: 'light',
+      searchSymbol: this.$route.params.searchSymbol
     }
   },
+  created: function() {
+	  	this.$nextTick(function(){
+	  		this.searchInfo();
+	  	});
+	  	
+  },  
   methods: {
   	selectpage: function(pageName){
-      this.$router.push('/Info/'+pageName);
+      this.$router.push('/Info/'+this.searchSymbol+'/'+pageName+'/'+this.searchSymbol);
+	},
+	async searchInfo(){
+	//const url = "/GetStockInfo?" +"stock_symbol="+this.searchSymbol;
+      // const url = "./static/test.json";
+      // const res = await this.$http.get(url);
+      // console.log(res);
+      
+
+      // for search Info
 	}
   },
   components: {

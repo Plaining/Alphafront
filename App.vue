@@ -1,11 +1,11 @@
 <template>
   <div id="app">
     <div class="div-title">
-        <Input class="input-size" search enter-button placeholder="Enter Symbol..." />
-        <Button class="button-login" type="primary" >
+        <Input class="input-size" search enter-button placeholder="Enter Symbol..."  v-model="searchSymbol" @on-search="sendMessage"/>
+         <Button class="button-login" type="primary" v-on:click="loginMethod">
           <span v-if="!loading">Log in!</span>
           <span v-else>Loading...</span>
-        </Button>
+        </Button> 
     </div>
     <Menu mode="horizontal" :theme="theme1" active-name="1" @on-select="selectPageIndex">
         <MenuItem name="0">
@@ -27,27 +27,49 @@
                 <MenuItem name="StockScreeners">Stock Screeners</MenuItem>
         </Submenu>
     </Menu>
-    <br>
-    <router-view/>
-
-    <!-- <router-view/> -->
+    <router-view v-if="isRouterAlive"/>
   </div>
 </template>
 
 <script>
 import Info from '@/components/Info'
 export default {
-  date () {
+  data () {
     return {
-      theme1: 'light'
+      theme1: 'light',
+      searchSymbol: 'BABA',
+      isRouterAlive: true,
     }
   },
   components: {
-    'data-detail': Info
+    'data-detail': Info,
   },
   methods:{
-    selectPageIndex: function(name){
-      this.$router.push('/'+name);
+    reload(){
+      this.isRouterAlive = false;
+      this.$nextTick(function(){this.isRouterAlive = true});
+    },
+    selectPageIndex: function(pname){
+      if(pname=="Info"){
+        if(this.searchSymbol==''){
+          alert("Please input a symbol!");
+        }
+        this.$router.push(
+         '/Info/'+this.searchSymbol
+        );
+      }else{
+        this.$router.push('/'+pname);
+      }
+    },
+    sendMessage(event){
+      
+      this.$router.push(
+         '/Info/'+this.searchSymbol
+        );
+      this.reload();
+    },
+    loginMethod: function(event){
+
     }
   }
 }

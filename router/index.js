@@ -14,7 +14,7 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
-      path: '/Info',
+      path: '/Info/:searchSymbol',
       name: 'Info',
       component: Info,
       children:[
@@ -24,7 +24,7 @@ export default new Router({
       			component: Summary
       		},
     		{
-      			path: 'Chart',
+      			path: 'Chart/:searchSymbol',
       			name: 'Chart',
       			component: Chart
     		},
