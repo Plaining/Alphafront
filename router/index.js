@@ -18,11 +18,11 @@ export default new Router({
       name: 'Info',
       component: Info,
       children:[
-            {
-            	path: 'Summary',
+        {
+            path: 'Summary/:searchSymbol',
       			name: 'Summary',
       			component: Summary
-      		},
+      	},
     		{
       			path: 'Chart/:searchSymbol',
       			name: 'Chart',

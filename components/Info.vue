@@ -1,30 +1,30 @@
 <template>
   <div>
-  	<div class="title">
-	  	<div class="title-left">
-			<div class="symbol-title">S&P 500</div>
-			<div class="name-title">SNP - SNP Real Time Price</div>
+  	<div class=title>
+	  	<div class=title-left>
+			<div class=symbol-title>{{searchSymbol}}( exchange:{{exchange}} ) </div>
+			<div class=name-title>{{shortName}} - {{longName}} - currency in {{currency}}</div>
 		</div>
-		<div class="button-isAddedtoWatch">
-		  	<Icon class="icon" type="md-heart-outline" size="24" />
+		<div class=button-isAddedtoWatch>
+		  	<Icon class=icon type=md-heart-outline size=24 />
 		  		<p>Add to Portfolio</p>
 		</div>
 	</div>
-	<div class="price">
-		<div class="price-show">2918.65</div>
-		<div class="change-show">change</div>
-		<div class="pchange-show">(change)</div>
+	<div class=price>
+		<div class=price-show >{{regularMarketPrice}}</div>
+		<div class=change-show >{{regularMarketChange}}</div>
+		<div class=pchange-show >{{regularMarketChangeperc}}</div>
 	</div>
-	  <Menu class="data-menu" mode="horizontal" :theme="theme1" active-name="2" @on-select="selectpage">
-	  		<MenuItem name="1-0">
+	  <Menu class=data-menu mode=horizontal :theme=theme1 active-name=2 @on-select=selectpage>
+	  		<MenuItem name=1-0>
 	        </MenuItem>
-	        <MenuItem name="Summary">
+	        <MenuItem name=Summary>
 	            Summary
 	        </MenuItem>
-	        <MenuItem name="Chart">
+	        <MenuItem name=Chart>
 	            Chart
 	        </MenuItem>
-	        <MenuItem name="HistoricalData">
+	        <MenuItem name=HistoricalData>
 	            Historical Data
 	        </MenuItem>
 	  </Menu>
@@ -41,27 +41,38 @@ export default {
   name: 'data-detail',
   data () {
     return {
-      theme1: 'light',
-      searchSymbol: this.$route.params.searchSymbol
+    	theme1: 'light',
+    	searchSymbol: this.$route.params.searchSymbol,
+    	shortName:'testshortName',
+    	longName:'testlongName',
+    	currency:'testcurrency',
+    	exchange:'testexchange',
+    	regularMarketPrice:'testregularMarketPrice',
+    	regularMarketChange:'testregularMarketChange',
+    	regularMarketChangeperc:'testregularMarketChangeperc'
     }
   },
   created: function() {
 	  	this.$nextTick(function(){
 	  		this.searchInfo();
 	  	});
-	  	
   },  
   methods: {
   	selectpage: function(pageName){
       this.$router.push('/Info/'+this.searchSymbol+'/'+pageName+'/'+this.searchSymbol);
 	},
 	async searchInfo(){
-	//const url = "/GetStockInfo?" +"stock_symbol="+this.searchSymbol;
-      // const url = "./static/test.json";
-      // const res = await this.$http.get(url);
-      // console.log(res);
-      
-
+	// const url = "/GetStockInfo";
+   //    const res = await this.$http.get(url,{stock_symbol:this.searchSymbol});
+      const url = "./static/getInfoTest.json";
+      const res = await this.$http.get(url);
+      this.shortName = res.shortName;
+      this.longName = res.longName;
+      this.currency = res.currency;
+      this.exchange = res.exchange;
+      this.regularMarketPrice = res.regularMarketPrice;
+      this.regularMarketChange = res.regularMarketChange;
+      this.regularMarketChangeperc = res.regularMarketChangeperc;//
       // for search Info
 	}
   },

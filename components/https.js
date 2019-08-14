@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 let baseURL = '/';
-baseURL = 'http://192.168.43.79:8000/stock'
+// baseURL = 'http://smallcookie.cn:8000/stock'
 // if(process.env.NODE_ENV=='development'){
 //     baseURL = 'http://223.104.212.22:8000/api'
 // }else{

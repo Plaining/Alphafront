@@ -31,7 +31,9 @@
     </FormItem>
   </Form>
 </div>
-<Table stripe :columns  ="columns1" :data="data1"></Table>
+<Table stripe :columns  ="columns1" :data="data1">
+  
+</Table>
 </div>
 </template>
 
@@ -41,6 +43,15 @@
     data () {
       return {
         index: 1,
+        symbol:'',
+        name:'',
+        price:'',
+        change:'',
+        pchange:0,
+        volume:'',
+        fiftyDayAverage:'',
+        twoHundredDayAverage:'',
+        fiftytwoWeekRange:'',
         formDynamic: {
           items: [
           {
@@ -52,49 +63,84 @@
         },
         columns1: [
         {
-          title: 'Name',
+          title: 'symbol',
+          key: 'symbol'
+        },
+        {
+          title: 'name',
           key: 'name'
         },
         {
-          title: 'Age',
-          key: 'age'
+          title: 'price',
+          key: 'price'
         },
         {
-          title: 'Address',
-          key: 'address'
+          title: 'change',
+          key: 'change'
+        },
+        {
+          title: 'pchange',
+          key: 'pchange'
+        },
+        {
+          title: 'volume',
+          key: 'volume'
+        },
+        {
+          title: 'fiftyDayAverage',
+          key: 'fiftyDayAverage'
+        },{
+          title: 'twoHundredDayAverage',
+          key:'twoHundredDayAverage'
+        },{
+          title: 'fiftytwoWeekRange',
+          key:'fiftytwoWeekRange'
         }
         ],
         data1: [
-        {
-          name: 'John Brown',
-          age: 18,
-          address: 'New York No. 1 Lake Park',
-          date: '2016-10-03'
-        },
-        {
-          name: 'Jim Green',
-          age: 24,
-          address: 'London No. 1 Lake Park',
-          date: '2016-10-01'
-        },
-        {
-          name: 'Joe Black',
-          age: 30,
-          address: 'Sydney No. 1 Lake Park',
-          date: '2016-10-02'
-        },
-        {
-          name: 'Jon Snow',
-          age: 26,
-          address: 'Ottawa No. 2 Lake Park',
-          date: '2016-10-04'
-        }
         ]
-      }
+       }
     },
     components: {
     },
+    created: function() {
+      this.$nextTick(function(){
+        this.searchInfo();
+      });
+    }, 
     methods:{
+      async searchInfo(){
+          const url = "/GetStockList";
+          const res = await this.$http.get(url);
+          // const url = "./static/getInfoTest.json";
+          // const res = await this.$http.get(url);
+          for(var i = 0; i < res.length;i++){
+            console.log(res[i]);
+            console.log(typeof(res[i]));
+            res[i] = JSON.parse(res[i]);
+            this.symbol=res[i]["symbol"];
+            this.name=res[i]["longName"];
+            this.price=res[i]["regularMarketPrice"];
+            this.change=res[i]["regularMarketChange"];
+            this.pchange=0;
+            this.volume=res[i]["regularMarketVolume"];
+            this.fiftyDayAverage=res[i]["fiftyDayAverage"];
+            this.twoHundredDayAverage=res[i]["twoHundredDayAverage"];
+            this.fiftytwoWeekRange=res[i]["fiftyTwoWeekRange"];
+            this.data1.push({
+              symbol:this.symbol,
+              name:this.name,
+              price:this.price,
+              change:this.change,
+              pchange:0,
+              volume:this.volume,
+              fiftyDayAverage:this.fiftyDayAverage,
+              twoHundredDayAverage:this.twoHundredDayAverage,
+              fiftytwoWeekRange:this.fiftytwoWeekRange
+            });
+          }
+          console.log(this.name);
+      },
       handleSubmit (name) {
         this.$refs[name].validate((valid) => {
           if (valid) {
