@@ -1,30 +1,31 @@
 <template>
   <div>
-  	<div class=title>
-	  	<div class=title-left>
-			<div class=symbol-title>{{searchSymbol}}( exchange:{{exchange}} ) </div>
-			<div class=name-title>{{shortName}} - {{longName}} - currency in {{currency}}</div>
+  	<div class="title">
+	  	<div class="title-left">
+			<div class="symbol-title">{{searchSymbol}}( exchange:{{exchange}} ) </div>
+			<div class="name-title">{{shortName}} - {{longName}} - currency in {{currency}}</div>
 		</div>
-		<div class=button-isAddedtoWatch>
-		  	<Icon class=icon type=md-heart-outline size=24 />
-		  		<p>Add to Portfolio</p>
+		<div class="button-isAddedtoWatch" v-on:click="changeActive">
+		  	<Icon id="isNotP" class="icon" type="md-heart-outline" size=24 v-if="!isPortfolio"/>
+		  	<Icon id="isP" class="icon" type="md-heart" size=24 v-else="isPortfolio"/>
+		  		<p >Add to Portfolio</p>
 		</div>
 	</div>
-	<div class=price>
-		<div class=price-show >{{regularMarketPrice}}</div>
-		<div class=change-show >{{regularMarketChange}}</div>
-		<div class=pchange-show >{{regularMarketChangeperc}}</div>
+	<div class="price">
+		<div class="price-show" >{{regularMarketPrice}}</div>
+		<div class="change-show" >{{regularMarketChange}}</div>
+		<div class="pchange-show" >{{regularMarketChangeperc}}</div>
 	</div>
-	  <Menu class=data-menu mode=horizontal :theme=theme1 active-name=2 @on-select=selectpage>
-	  		<MenuItem name=1-0>
+	  <Menu class="data-menu" mode="horizontal" :theme="theme1" active-name="2" @on-select=selectpage>
+	  		<MenuItem name="1-0">
 	        </MenuItem>
-	        <MenuItem name=Summary>
+	        <MenuItem name="Summary">
 	            Summary
 	        </MenuItem>
-	        <MenuItem name=Chart>
+	        <MenuItem name="Chart">
 	            Chart
 	        </MenuItem>
-	        <MenuItem name=HistoricalData>
+	        <MenuItem name="HistoricalData">
 	            Historical Data
 	        </MenuItem>
 	  </Menu>
@@ -41,6 +42,8 @@ export default {
   name: 'data-detail',
   data () {
     return {
+    	isLogin:false,
+    	isPortfolio: false,
     	theme1: 'light',
     	searchSymbol: this.$route.params.searchSymbol,
     	shortName:'testshortName',
@@ -55,24 +58,59 @@ export default {
   created: function() {
 	  	this.$nextTick(function(){
 	  		this.searchInfo();
+	  		this.checkifLogin();
+	  		this.checkisinPorfolio();
 	  	});
-  },  
+  }, 
   methods: {
+  	async checkifLogin(){
+  		const url="/User/isLogin/";
+  		const res = await this.$http.get(url);
+  		this.isLogin = res.isLogin;
+  	},
+  	async checkisinPorfolio(){
+  		const url="/User/isinPortfolio";
+  		const res = await this.$http.get(url,{stocksymbol:this.searchSymbol});
+  		this.isPortfolio = res.isPortfolio;
+  	},
+  	async changeActive(){
+  		if(!this.isLogin){
+  			alert("please login first!");
+  		}else {
+  			if(!this.isPortfolio){
+	  			const url = "/User/AddPortfolio";
+	      		const res = await this.$http.get(url,{Securitysymbol:this.searchSymbol});
+	      		if(res.code == '200'){
+	      			this.isPortfolio = true;
+	      		}else{
+	      			console.log(res.message);
+	      		}
+	  		}else{
+	  			const url = "/User/DeletePortfolio";
+	      		const res = await this.$http.get(url,{Securitysymbol:this.searchSymbol});
+	      		if(res.code == '200'){
+	      			this.isPortfolio = false;
+	      		}else{
+	      			console.log(res.message);
+	      		}
+	  		}
+  		}
+  	},
   	selectpage: function(pageName){
       this.$router.push('/Info/'+this.searchSymbol+'/'+pageName+'/'+this.searchSymbol);
 	},
 	async searchInfo(){
-	// const url = "/GetStockInfo";
-   //    const res = await this.$http.get(url,{stock_symbol:this.searchSymbol});
-      const url = "./static/getInfoTest.json";
-      const res = await this.$http.get(url);
+	  const url = "/stock/GetStockInfo";
+      const res = await this.$http.get(url,{stock_symbol:this.searchSymbol});
+      // const url = "./static/getInfoTest.json";
+      // const res = await this.$http.get(url);
       this.shortName = res.shortName;
       this.longName = res.longName;
       this.currency = res.currency;
       this.exchange = res.exchange;
       this.regularMarketPrice = res.regularMarketPrice;
       this.regularMarketChange = res.regularMarketChange;
-      this.regularMarketChangeperc = res.regularMarketChangeperc;//
+      this.regularMarketChangeperc = res.regularMarketChangeperc;
       // for search Info
 	}
   },

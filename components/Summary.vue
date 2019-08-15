@@ -52,12 +52,10 @@ export default {
   },  
   methods:{
     async searchInfo(){
-          // const url = "/GetStockInfo";
-          // const res = await this.$http.get(url,{stock_symbol:this.searchSymbol});
-          const url = "./static/getInfoTest.json";
-          const res = await this.$http.get(url);
-          console.log(res);
-          console.log(this.searchSymbol);
+          const url = "/stock/GetStockInfo";
+          const res = await this.$http.get(url,{stock_symbol:this.searchSymbol});
+          // const url = "./static/getInfoTest.json";
+          // const res = await this.$http.get(url);
           this.regularMarketPrice = res.regularMarketPrice;
           this.regularMarketDayHigh = res.regularMarketDayHigh;
           this.regularMarketDayLow = res.regularMarketDayLow;
@@ -91,25 +89,12 @@ export default {
           }]
     },
     NumFormat: function(value) {
-      if(!value) return '0.00';
-      
-      var intPart =  Number(value)|0; 
-      var intPartFormat = intPart.toString().replace(/(\d)(?=(?:\d{3})+$)/g, '$1,'); 
-
-      var floatPart = ".00"; 
-      var value2Array = value.split(".");
-
-      if(value2Array.length == 2) {
-        floatPart = value2Array[1].toString();
-
-        if(floatPart.length == 1) { 
-          return intPartFormat + "." + floatPart + '0';
-        } else {
-          return intPartFormat + "." + floatPart;
-        }
-      } else {
-        return intPartFormat + floatPart;
-      }
+      var res=num.toString().replace(/\d+/, function(n){ // 先提取整数部分
+      return n.replace(/(\d)(?=(\d{3})+$)/g,function($1){
+      return $1+",";
+      });
+      })
+      return res;
 
     },
     tableRowStyle(row, index){

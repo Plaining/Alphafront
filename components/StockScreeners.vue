@@ -1,40 +1,14 @@
 <template>
-  <div>
-   <div>
-    <Form ref="formDynamic" :model="formDynamic" :label-width="80" style="width: 300px">
-      <FormItem
-      v-for="(item, index) in formDynamic.items"
-      v-if="item.status"
-      :key="index"
-      :label="'Item ' + item.index"
-      :prop="'items.' + index + '.value'"
-      :rules="{required: true, message: 'Item ' + item.index +' can not be empty', trigger: 'blur'}">
-      <Row>
-        <Col span="18">
-          <Input type="text" v-model="item.value" placeholder="Enter something..."></Input>
-        </Col>
-        <Col span="4" offset="1">
-          <Button @click="handleRemove(index)">Delete</Button>
-        </Col>
-      </Row>
-    </FormItem>
-    <FormItem>
-      <Row>
-        <Col span="12">
-          <Button type="dashed" long @click="handleAdd" icon="md-add">Add item</Button>
-        </Col>
-      </Row>
-    </FormItem>
-    <FormItem>
-      <Button type="primary" @click="handleSubmit('formDynamic')">Submit</Button>
-      <Button @click="handleReset('formDynamic')" style="margin-left: 8px">Reset</Button>
-    </FormItem>
-  </Form>
-</div>
-<Table stripe :columns  ="columns1" :data="data1">
-  
-</Table>
-</div>
+  <div>   
+    <Table stripe :columns  ="columns1" :data="data1" @on-row-click="rowClick">
+    </Table>
+    <!-- <div style="margin: 10px;overflow: hidden">
+        <div style="float: right;">
+            <Page :total="100" :current="1" @on-change="changePage"></Page>
+        </div>
+    </div> -->
+  </div>
+
 </template>
 
 <script>
@@ -72,11 +46,28 @@
         },
         {
           title: 'price',
-          key: 'price'
+          key: 'price',
+          sortable:true,
         },
         {
           title: 'change',
-          key: 'change'
+          key: 'change',
+          sortable:true,
+          filters:[{
+            label:'up',
+            value:1
+          },{
+            label:'down',
+            value:2
+          }],
+          filterMultiple:false,
+          filterMethod(value,row){
+            if(value === 1){
+              return row.change>0;
+            }else if(value === 2){
+              return row.change<0;
+            }
+          }
         },
         {
           title: 'pchange',
@@ -84,22 +75,26 @@
         },
         {
           title: 'volume',
-          key: 'volume'
+          key: 'volume',
+          sortable:true
         },
         {
           title: 'fiftyDayAverage',
-          key: 'fiftyDayAverage'
+          key: 'fiftyDayAverage',
+          sortable:true
         },{
           title: 'twoHundredDayAverage',
-          key:'twoHundredDayAverage'
+          key:'twoHundredDayAverage',
+          sortable:true
         },{
           title: 'fiftytwoWeekRange',
-          key:'fiftytwoWeekRange'
+          key:'fiftytwoWeekRange',
+          sortable:true
         }
         ],
         data1: [
         ]
-       }
+      }
     },
     components: {
     },
@@ -109,14 +104,15 @@
       });
     }, 
     methods:{
+      rowClick(data,index){
+          this.$router.push('/Info/'+ data.symbol);
+      },
       async searchInfo(){
-          const url = "/GetStockList";
-          const res = await this.$http.get(url);
+        const url = "/stock/GetStockList";
+        const res = await this.$http.get(url);
           // const url = "./static/getInfoTest.json";
           // const res = await this.$http.get(url);
           for(var i = 0; i < res.length;i++){
-            console.log(res[i]);
-            console.log(typeof(res[i]));
             res[i] = JSON.parse(res[i]);
             this.symbol=res[i]["symbol"];
             this.name=res[i]["longName"];
@@ -139,35 +135,34 @@
               fiftytwoWeekRange:this.fiftytwoWeekRange
             });
           }
-          console.log(this.name);
-      },
-      handleSubmit (name) {
-        this.$refs[name].validate((valid) => {
-          if (valid) {
-            this.$Message.success('Success!');
-          } else {
-            this.$Message.error('Fail!');
-          }
-        })
-      },
-      handleReset (name) {
-        this.$refs[name].resetFields();
-      },
-      handleAdd () {
-        this.index++;
-        this.formDynamic.items.push({
-          value: '',
-          index: this.index,
-          status: 1
-        });
-      },
-      handleRemove (index) {
-        this.formDynamic.items[index].status = 0;
+        },
+        // handleSubmit (name) {
+        //   this.$refs[name].validate((valid) => {
+        //     if (valid) {
+        //       this.$Message.success('Success!');
+        //     } else {
+        //       this.$Message.error('Fail!');
+        //     }
+        //   })
+        // },
+        // handleReset (name) {
+        //   this.$refs[name].resetFields();
+        // },
+        // handleAdd () {
+        //   this.index++;
+        //   this.formDynamic.items.push({
+        //     value: '',
+        //     index: this.index,
+        //     status: 1
+        //   });
+        // },
+        // handleRemove (index) {
+        //   this.formDynamic.items[index].status = 0;
+        // }
       }
     }
-  }
-</script>
+  </script>
 
 
-<style>
-</style>
+  <style>
+  </style>

@@ -1,11 +1,12 @@
 <template>
   <div id="app">
     <div class="div-title">
-        <Input class="input-size" search enter-button placeholder="Enter Symbol..."  v-model="searchSymbol" @on-search="sendMessage"/>
-         <Button class="button-login" type="primary" v-on:click="loginMethod">
-          <span v-if="!loading">Log in!</span>
-          <span v-else>Loading...</span>
-        </Button> 
+        <Input class="inputsize" search enter-button placeholder="Enter Symbol..."  v-model="searchSymbol" @on-search="sendMessage"/>
+         <a href="/User/">
+           <Button class="button-login" type="primary" v-on:click="loginMethod">
+            {{isLogin}}
+          </Button> 
+        </a>
     </div>
     <Menu mode="horizontal" :theme="theme1" active-name="1" @on-select="selectPageIndex">
         <MenuItem name="0">
@@ -23,7 +24,6 @@
                 <Icon type="ios-stats" />
                Screeners
             </template>
-                <MenuItem name="ETFScreeners">ETF Screeners</MenuItem>
                 <MenuItem name="StockScreeners">Stock Screeners</MenuItem>
         </Submenu>
     </Menu>
@@ -36,15 +36,30 @@ import Info from '@/components/Info'
 export default {
   data () {
     return {
+      isLogin: 'log in',
       theme1: 'light',
-      searchSymbol: 'BABA',
+      searchSymbol: '',
       isRouterAlive: true,
     }
   },
+  created: function() {
+      this.$nextTick(function(){
+        this.checkifLogin();
+      });
+  },  
   components: {
     'data-detail': Info,
   },
   methods:{
+    async checkifLogin(){
+      const url="/User/isLogin";
+      const res = await this.$http.get(url);
+      if(res.isLogin){
+        this.isLogin = "log out";
+      }else{
+        this.isLogin = "log in";
+      }
+    },
     reload(){
       this.isRouterAlive = false;
       this.$nextTick(function(){this.isRouterAlive = true});
@@ -88,8 +103,8 @@ export default {
   margin-top: 20px;
   height:40px;
 }
-.input-size{
-  width: 555px;
+.inputsize{
+  width: 555px !important;
   margin-left: 255px;
   float:left;
 }

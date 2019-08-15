@@ -4,15 +4,19 @@ import Info from '@/components/Info'
 import Summary from '@/components/Summary'
 import Chart from '@/components/Chart'
 import HistoricalData from '@/components/HistoricalData'
-import ETFScreeners from '@/components/ETFScreeners'
 import StockScreeners from '@/components/StockScreeners'
 import MyPortfolio from '@/components/MyPortfolio'
-
+import index from '@/components/index'
 
 Vue.use(Router)
 
 export default new Router({
   routes: [
+    {
+          path: '/',
+          name: 'index',
+          component: index
+    },
     {
       path: '/Info/:searchSymbol',
       name: 'Info',
@@ -39,11 +43,6 @@ export default new Router({
       path: '/MyPortfolio',
       name: 'MyPortfolio',
       component: MyPortfolio
-    },
-    {
-      path: '/ETFScreeners',
-      name: 'ETFScreeners',
-      component: ETFScreeners
     },
     {
       path: '/StockScreeners',
